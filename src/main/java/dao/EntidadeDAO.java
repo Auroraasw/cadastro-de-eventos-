@@ -1,7 +1,7 @@
 package dao;
 
 public class EntidadeDAO {
-  public class Cadastro 
+public class Cadastro 
 {
     private Integer id
 ;
