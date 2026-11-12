@@ -1,6 +1,6 @@
 package dao;
 
-public class EntidadeDAO {
+public class EventoDAO {
 public class Cadastro 
 {
     private Integer id
