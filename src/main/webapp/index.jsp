@@ -1,12 +1,39 @@
 
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="br.com.senai.projeto.model.Evento" %>
+<%@ page import="br.com.senai.projeto.dao.EventoDAO" %>
+<%@ page import="java.sql.Date" %>
+
+<%
+    if ("POST".equalsIgnoreCase(request.getMethod())) {
+
+        String nome = request.getParameter("nome");
+        String local = request.getParameter("local");
+        Date data = Date.valueOf(request.getParameter("data"));
+        String telefone = request.getParameter("telefone");
+        String email = request.getParameter("email");
+        String categoria = request.getParameter("categoria");
+
+        Evento evento = new Evento(nome, local, data, telefone, email, categoria);
+
+        EventoDAO dao = new EventoDAO();
+        dao.cadastrar(evento);
+
+        response.sendRedirect("listagem.jsp");
+        return;
+    }
+%>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscrição em Eventos</title>
+
+    <title>Cadastro de Eventos</title>
 
     <style>
+
         * {
             margin: 0;
             padding: 0;
@@ -15,11 +42,10 @@
         }
 
         body {
-            background-color: #075e54;
+            background: #075e54;
             color: white;
             min-height: 100vh;
             padding: 30px 15px;
-            transition: 0.3s;
         }
 
         .container {
@@ -29,40 +55,18 @@
         }
 
         .topo {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            text-align: center;
             margin-bottom: 35px;
         }
 
         h2 {
-            text-align: center;
-            font-size: 23px;
+            font-size: 24px;
         }
 
-        .tema {
-            cursor: pointer;
-            background: white;
-            color: #075e54;
-            padding: 10px 15px;
-            border-radius: 8px;
+        .subtitulo {
             font-size: 13px;
-        }
-
-        #escuro {
-            display: none;
-        }
-
-        #escuro:checked ~ .pagina {
-            background: #101820;
-            color: white;
-        }
-
-        .pagina {
-            background: #075e54;
-            color: white;
-            min-height: 100vh;
-            transition: 0.3s;
+            margin-top: 10px;
+            color: #c6d9d5;
         }
 
         .grupo {
@@ -80,12 +84,7 @@
             font-weight: bold;
         }
 
-        .linha {
-            display: flex;
-            gap: 10px;
-        }
-
-        input, select, textarea {
+        input, select {
             width: 100%;
             padding: 12px;
             margin-bottom: 9px;
@@ -96,8 +95,7 @@
             border-radius: 2px;
         }
 
-        input::placeholder,
-        textarea::placeholder {
+        input::placeholder {
             color: #c6d9d5;
         }
 
@@ -106,13 +104,8 @@
             color: white;
         }
 
-        input:focus, select:focus, textarea:focus {
+        input:focus, select:focus {
             border-color: #d6d36c;
-        }
-
-        textarea {
-            height: 100px;
-            resize: vertical;
         }
 
         .botao {
@@ -131,39 +124,50 @@
             background: #eeeb91;
         }
 
-        /* TEMA ESCURO */
+        /* Tema escuro */
 
-        #escuro:checked ~ .pagina {
-            background: #101820;
-            color: #f1f1f1;
+        #tema {
+            display: none;
         }
 
-        #escuro:checked ~ .pagina input,
-        #escuro:checked ~ .pagina select,
-        #escuro:checked ~ .pagina textarea {
+        .alternar {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background: white;
+            color: #075e54;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        #tema:checked ~ .container {
+            background: #101820;
+            color: white;
+        }
+
+        #tema:checked ~ .container input,
+        #tema:checked ~ .container select {
             background: #1d2935;
             color: white;
             border-color: #536474;
         }
 
-        #escuro:checked ~ .pagina input::placeholder,
-        #escuro:checked ~ .pagina textarea::placeholder {
+        #tema:checked ~ .container input::placeholder {
             color: #aeb9c3;
         }
 
-        #escuro:checked ~ .pagina select option {
+        #tema:checked ~ .container select option {
             background: #1d2935;
         }
 
-        @media (max-width: 500px) {
-            .linha {
-                flex-direction: column;
-                gap: 0;
+        @media(max-width: 500px) {
+            .container {
+                padding: 10px;
             }
 
-            .topo {
-                flex-direction: column;
-                gap: 15px;
+            h2 {
+                font-size: 20px;
             }
         }
 
@@ -172,111 +176,117 @@
 
 <body>
 
-<input type="checkbox" id="escuro">
-
-<div class="pagina">
+    <input type="checkbox" id="tema">
 
     <div class="container">
 
         <div class="topo">
+            <h2>Formulário de Cadastro de Eventos</h2>
 
-            <h2>Formulário de Inscrição em Eventos</h2>
-
-            <label for="escuro" class="tema">
-                🌙 Alternar tema
-            </label>
-
+            <p class="subtitulo">
+                Preencha as informações para cadastrar seu evento.
+            </p>
         </div>
 
-        <form>
+        <label for="tema" class="alternar">
+            🌙 Alternar tema
+        </label>
+
+        <form action="cadastro.jsp" method="POST">
 
             <div class="grupo">
-                <label><span class="numero">1.</span> Nome completo</label>
+                <label>
+                    <span class="numero">1.</span>
+                    Nome do evento
+                </label>
 
-                <div class="linha">
-                    <input type="text" placeholder="Primeiro nome" required>
-                    <input type="text" placeholder="Último nome" required>
-                </div>
+                <input type="text"
+                       name="nome"
+                       placeholder="Digite o nome do evento"
+                       required>
             </div>
 
             <div class="grupo">
-                <label><span class="numero">2.</span> Endereço</label>
+                <label>
+                    <span class="numero">2.</span>
+                    Local do evento
+                </label>
 
-                <input type="text" placeholder="Endereço completo" required>
-
-                <div class="linha">
-                    <input type="text" placeholder="Cidade" required>
-
-                    <select required>
-                        <option value="">Selecione o estado</option>
-                        <option>Santa Catarina</option>
-                        <option>São Paulo</option>
-                        <option>Paraná</option>
-                        <option>Rio de Janeiro</option>
-                        <option>Minas Gerais</option>
-                        <option>Bahia</option>
-                    </select>
-                </div>
+                <input type="text"
+                       name="local"
+                       placeholder="Digite o endereço ou local"
+                       required>
             </div>
 
             <div class="grupo">
-                <label><span class="numero">3.</span> Número de telefone</label>
-                <input type="tel" placeholder="(00) 00000-0000" required>
+                <label>
+                    <span class="numero">3.</span>
+                    Data do evento
+                </label>
+
+                <input type="date"
+                       name="data"
+                       required>
             </div>
 
             <div class="grupo">
-                <label><span class="numero">4.</span> Endereço de e-mail</label>
-                <input type="email" placeholder="seuemail@email.com" required>
+                <label>
+                    <span class="numero">4.</span>
+                    Número de telefone
+                </label>
+
+                <input type="tel"
+                       name="telefone"
+                       placeholder="(00) 00000-0000"
+                       required>
             </div>
 
             <div class="grupo">
-                <label><span class="numero">5.</span> Empresa / Organização</label>
-                <input type="text" placeholder="Nome da empresa">
+                <label>
+                    <span class="numero">5.</span>
+                    Endereço de e-mail
+                </label>
+
+                <input type="email"
+                       name="email"
+                       placeholder="email@email.com"
+                       required>
             </div>
 
             <div class="grupo">
-                <label><span class="numero">6.</span> Nome do evento</label>
-                <input type="text" placeholder="Nome do evento" required>
-            </div>
+                <label>
+                    <span class="numero">6.</span>
+                    Categoria do evento
+                </label>
 
-            <div class="grupo">
-                <label><span class="numero">7.</span> Tipo de evento</label>
+                <select name="categoria" required>
 
-                <select required>
-                    <option value="">Selecione o tipo</option>
-                    <option>Workshop</option>
-                    <option>Palestra</option>
-                    <option>Conferência</option>
-                    <option>Curso</option>
-                    <option>Festival</option>
-                    <option>Evento esportivo</option>
+                    <option value="">Selecione uma categoria</option>
+
+                    <option value="Workshop">Workshop</option>
+
+                    <option value="Palestra">Palestra</option>
+
+                    <option value="Conferencia">Conferência</option>
+
+                    <option value="Curso">Curso</option>
+
+                    <option value="Festival">Festival</option>
+
+                    <option value="Esportivo">Esportivo</option>
+
+                    <option value="Outro">Outro</option>
+
                 </select>
             </div>
 
-            <div class="grupo">
-                <label><span class="numero">8.</span> Data do evento</label>
-                <input type="date" required>
-            </div>
-
-            <div class="grupo">
-                <label><span class="numero">9.</span> Quantidade de participantes</label>
-                <input type="number" min="1" placeholder="Quantidade" required>
-            </div>
-
-            <div class="grupo">
-                <label><span class="numero">10.</span> Informações adicionais</label>
-                <textarea placeholder="Digite suas observações..."></textarea>
-            </div>
-
             <button type="submit" class="botao">
-                Enviar inscrição
+                Cadastrar evento
             </button>
 
         </form>
 
     </div>
-
-</div>
 
 </body>
 </html>
