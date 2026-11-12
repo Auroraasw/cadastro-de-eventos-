@@ -9,9 +9,11 @@
         String nome = request.getParameter("nome");
         String local = request.getParameter("local");
         Date data = Date.valueOf(request.getParameter("data"));
+        Int telefone = request.getParameter("telefone");
+        String email = request.getParameter("email");
         String categoria = request.getParameter("categoria");
 
-        Evento evento = new Evento(nome, local, data, categoria);
+        Evento evento = new Evento(nome, local, data, telefone, email, categoria);
 
         EventoDAO dao = new EventoDAO();
         dao.cadastrar(evento);
