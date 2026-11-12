@@ -17,7 +17,9 @@
 
 <h1>Jogos cadastrados</h1>
 
-<a href="cadastro.jsp">Cadastrar novo jogo</a>
+<button type="button" onclick="window.location.href='cadastro.jsp'">
+    Cadastrar novo jogo
+</button>
 
 <table border="1">
 
