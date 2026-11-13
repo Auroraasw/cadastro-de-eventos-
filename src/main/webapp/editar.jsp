@@ -1,75 +1,30 @@
+
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="br.com.senai.projeto.model.Jogo" %>
-<%@ page import="br.com.senai.projeto.dao.JogoDAO" %>
+<%@ page import="model.Evento" %>
+<%@ page import="dao.EventoDAO" %>
 
 <%
-    JogoDAO dao = new JogoDAO();
+        request.setCharacterEncoding("UTF-8");
 
-    if ("POST".equalsIgnoreCase(request.getMethod())) {
+        EventoDAO dao = new EventoDAO();
 
-        int id = Integer.parseInt(request.getParameter("id"));
-        String nome = request.getParameter("nome");
-        String plataforma = request.getParameter("plataforma");
-        String genero = request.getParameter("genero");
-        int ano = Integer.parseInt(request.getParameter("ano"));
+        if ("POST".equalsIgnoreCase(request.getMethod())) {
 
-        Jogo jogo = new Jogo(id, nome, plataforma, genero, ano);
+            Evento evento = new Evento();
 
-        dao.atualizar(jogo);
+            evento.setId(Integer.parseInt(request.getParameter("id")));
+            evento.setNome(request.getParameter("nome"));
+            evento.setLocal(request.getParameter("local"));
+            evento.setData(request.getParameter("data"));
+            evento.setTelefone(request.getParameter("telefone"));
+            evento.setEmail(request.getParameter("email"));
+            evento.setCategoria(request.getParameter("categoria"));
 
-        response.sendRedirect("listagem.jsp");
-        return;
-    }
+            boolean atualizado = dao.atualizar(evento);
 
-    int id = Integer.parseInt(request.getParameter("id"));
-    Jogo jogo = dao.buscarPorId(id);
+            if (atualizado) {
+                response.sendRedirect("listagem.jsp");
+                return;
+            }
+        }
 
-    if (jogo == null) {
-        response.sendRedirect("listagem.jsp");
-        return;
-    }
-%>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Editar Jogo</title>
-</head>
-<body>
-
-<h1>Editar Jogo</h1>
-
-<form action="editar.jsp" method="post">
-
-    <input type="hidden" name="id" value="<%= jogo.getId() %>">
-
-    <label>Nome:</label>
-    <input type="text" name="nome"
-           value="<%= jogo.getNome() %>" required>
-
-    <br><br>
-
-    <label>Plataforma:</label>
-    <input type="text" name="plataforma"
-           value="<%= jogo.getPlataforma() %>" required>
-
-    <br><br>
-
-    <label>Gênero:</label>
-    <input type="text" name="genero"
-           value="<%= jogo.getGenero() %>" required>
-
-    <br><br>
-
-    <label>Ano:</label>
-    <input type="number" name="ano"
-           value="<%= jogo.getAno() %>" required>
-
-    <br><br>
-
-    <button type="submit">Salvar alterações</button>
-
-</form>
-
-</body>
-</html>
